@@ -11,6 +11,7 @@ from .api.routes.inventory import router as inventory_router
 from .api.routes.stock_movements import router as stock_movements_router
 from .api.routes.receipts import router as receipts_router
 from .api.routes.deliveries import router as deliveries_router
+from .api.routes.transfers import router as transfers_router
 
 
 app = FastAPI(
@@ -27,6 +28,7 @@ app.include_router(inventory_router)
 app.include_router(stock_movements_router)
 app.include_router(receipts_router)
 app.include_router(deliveries_router)
+app.include_router(transfers_router)
 
 
 @app.get("/", tags=["system"])
