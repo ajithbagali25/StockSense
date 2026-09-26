@@ -2,6 +2,7 @@ from fastapi import FastAPI, HTTPException
 from sqlalchemy import text
 
 from .database.connection import engine
+from .api.routes.auth import router as auth_router
 
 
 app = FastAPI(
@@ -9,6 +10,7 @@ app = FastAPI(
 	description="Modular inventory management system API",
 	version="0.1.0",
 )
+app.include_router(auth_router)
 
 
 @app.get("/", tags=["system"])
