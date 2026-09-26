@@ -13,6 +13,7 @@ from .api.routes.receipts import router as receipts_router
 from .api.routes.deliveries import router as deliveries_router
 from .api.routes.transfers import router as transfers_router
 from .api.routes.adjustments import router as adjustments_router
+from .api.routes.dashboard import router as dashboard_router
 
 
 app = FastAPI(
@@ -31,6 +32,7 @@ app.include_router(receipts_router)
 app.include_router(deliveries_router)
 app.include_router(transfers_router)
 app.include_router(adjustments_router)
+app.include_router(dashboard_router)
 
 
 @app.get("/", tags=["system"])
