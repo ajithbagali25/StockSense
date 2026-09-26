@@ -1,4 +1,4 @@
-from sqlalchemy import Boolean, ForeignKey, String
+from sqlalchemy import Boolean, ForeignKey, String, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from ..database.base import Base
@@ -6,6 +6,7 @@ from ..database.base import Base
 
 class Location(Base):
 	__tablename__ = "locations"
+	__table_args__ = (UniqueConstraint("warehouse_id", "code", name="uq_location_warehouse_code"),)
 
 	id: Mapped[int] = mapped_column(primary_key=True)
 	warehouse_id: Mapped[int] = mapped_column(ForeignKey("warehouses.id", ondelete="CASCADE"), nullable=False, index=True)

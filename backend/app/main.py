@@ -5,6 +5,8 @@ from .database.connection import engine
 from .api.routes.auth import router as auth_router
 from .api.routes.categories import router as categories_router
 from .api.routes.products import router as products_router
+from .api.routes.warehouses import router as warehouses_router
+from .api.routes.locations import router as locations_router
 
 
 app = FastAPI(
@@ -15,6 +17,8 @@ app = FastAPI(
 app.include_router(auth_router)
 app.include_router(categories_router)
 app.include_router(products_router)
+app.include_router(warehouses_router)
+app.include_router(locations_router)
 
 
 @app.get("/", tags=["system"])

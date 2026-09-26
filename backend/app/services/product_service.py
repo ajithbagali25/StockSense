@@ -1,7 +1,7 @@
 from sqlalchemy import func, or_, select
 from sqlalchemy.orm import Session
 
-from ..models import Category, Product
+from ..models import Category, Location, Product, Warehouse
 from ..schemas.category import CategoryCreate, CategoryUpdate
 from ..schemas.product import ProductCreate, ProductUpdate
 
@@ -59,3 +59,27 @@ def update_product(database: Session, product: Product, payload: ProductUpdate) 
 		setattr(product, field, value)
 	database.flush()
 	return product
+
+
+def list_warehouses(database: Session, search: str | None, skip: int, limit: int) -> tuple[list[Warehouse], int]:
+	query = select(Warehouse)
+	if search:
+		query = query.where(Warehouse.name.ilike(f"%{search}%") | Warehouse.code.ilike(f"%{search}%"))
+	total = database.scalar(select(func.count()).select_from(query.subquery())) or 0
+	return list(database.scalars(query.order_by(Warehouse.name).offset(skip).limit(limit))), total
+
+
+def list_locations(
+	database: Session,
+	warehouse_id: int | None,
+	search: str | None,
+	skip: int,
+	limit: int,
+) -> tuple[list[Location], int]:
+	query = select(Location)
+	if warehouse_id is not None:
+		query = query.where(Location.warehouse_id == warehouse_id)
+	if search:
+		query = query.where(Location.name.ilike(f"%{search}%") | Location.code.ilike(f"%{search}%"))
+	total = database.scalar(select(func.count()).select_from(query.subquery())) or 0
+	return list(database.scalars(query.order_by(Location.name).offset(skip).limit(limit))), total
