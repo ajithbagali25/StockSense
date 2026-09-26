@@ -1,0 +1,229 @@
+<odoo>
+    <record id="view_stocksense_operation_list" model="ir.ui.view">
+        <field name="name">stocksense.operation.list</field>
+        <field name="model">stocksense.operation</field>
+        <field name="arch" type="xml">
+            <list decoration-success="state == 'done'"
+                  decoration-muted="state == 'cancelled'">
+                <field name="name"/>
+                <field name="operation_type"/>
+                <field name="product_id"/>
+                <field name="quantity"/>
+                <field name="source_location_id"/>
+                <field name="destination_location_id"/>
+                <field name="partner_name"/>
+                <field name="state"/>
+                <field name="date"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_stocksense_operation_form" model="ir.ui.view">
+        <field name="name">stocksense.operation.form</field>
+        <field name="model">stocksense.operation</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_set_ready" type="object"
+                            string="Mark Ready"
+                            class="btn-secondary"
+                            invisible="state != 'draft'"/>
+                    <button name="action_confirm" type="object"
+                            string="Validate"
+                            class="btn-primary"
+                            invisible="state == 'done' or state == 'cancelled'"/>
+                    <button name="action_cancel" type="object"
+                            string="Cancel"
+                            invisible="state == 'done' or state == 'cancelled'"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,waiting,ready,done"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name"/></h1>
+                    </div>
+                    <group>
+                        <group string="Operation">
+                            <field name="operation_type"/>
+                            <field name="product_id"/>
+                            <field name="quantity"/>
+                            <field name="partner_name"
+                                   invisible="operation_type == 'internal'"/>
+                        </group>
+                        <group string="Locations">
+                            <field name="source_location_id"/>
+                            <field name="destination_location_id"/>
+                            <field name="date"/>
+                            <field name="user_id"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="note"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_stocksense_operation_search" model="ir.ui.view">
+        <field name="name">stocksense.operation.search</field>
+        <field name="model">stocksense.operation</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="product_id"/>
+                <field name="operation_type"/>
+                <field name="state"/>
+                <field name="source_location_id"/>
+                <field name="destination_location_id"/>
+                <filter name="draft" string="Draft"
+                        domain="[('state','=','draft')]"/>
+                <filter name="waiting" string="Waiting"
+                        domain="[('state','=','waiting')]"/>
+                <filter name="ready" string="Ready"
+                        domain="[('state','=','ready')]"/>
+                <filter name="done" string="Done"
+                        domain="[('state','=','done')]"/>
+                <filter name="cancelled" string="Canceled"
+                        domain="[('state','=','cancelled')]"/>
+                <group string="Group By">
+                    <filter name="group_type" string="Document Type"
+                            context="{'group_by':'operation_type'}"/>
+                    <filter name="group_state" string="Status"
+                            context="{'group_by':'state'}"/>
+                    <filter name="group_product" string="Product"
+                            context="{'group_by':'product_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_stocksense_ledger_list" model="ir.ui.view">
+        <field name="name">stocksense.ledger.list</field>
+        <field name="model">stocksense.ledger</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="create_date"/>
+                <field name="product_id"/>
+                <field name="operation_type"/>
+                <field name="quantity_change"/>
+                <field name="source_location_id"/>
+                <field name="destination_location_id"/>
+                <field name="user_id"/>
+                <field name="note"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_stocksense_adjustment_list" model="ir.ui.view">
+        <field name="name">stocksense.adjustment.list</field>
+        <field name="model">stocksense.adjustment</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="product_id"/>
+                <field name="location_id"/>
+                <field name="recorded_quantity"/>
+                <field name="counted_quantity"/>
+                <field name="difference"/>
+                <field name="state"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_stocksense_adjustment_form" model="ir.ui.view">
+        <field name="name">stocksense.adjustment.form</field>
+        <field name="model">stocksense.adjustment</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_validate" type="object"
+                            string="Validate Adjustment"
+                            class="btn-primary"
+                            invisible="state != 'draft'"/>
+                    <button name="action_cancel" type="object"
+                            string="Cancel"
+                            invisible="state != 'draft'"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,done,cancelled"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name"/></h1>
+                    </div>
+                    <group>
+                        <field name="product_id"/>
+                        <field name="location_id"/>
+                        <field name="recorded_quantity" readonly="1"/>
+                        <field name="counted_quantity"/>
+                        <field name="difference" readonly="1"/>
+                        <field name="reason"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_stocksense_operations" model="ir.actions.act_window">
+        <field name="name">All Operations</field>
+        <field name="res_model">stocksense.operation</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_stocksense_operation_search"/>
+    </record>
+
+    <record id="action_stocksense_receipts" model="ir.actions.act_window">
+        <field name="name">Receipts</field>
+        <field name="res_model">stocksense.operation</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('operation_type','=','receipt')]</field>
+        <field name="context">{'default_operation_type':'receipt'}</field>
+    </record>
+
+    <record id="action_stocksense_deliveries" model="ir.actions.act_window">
+        <field name="name">Delivery Orders</field>
+        <field name="res_model">stocksense.operation</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('operation_type','=','delivery')]</field>
+        <field name="context">{'default_operation_type':'delivery'}</field>
+    </record>
+
+    <record id="action_stocksense_transfers" model="ir.actions.act_window">
+        <field name="name">Internal Transfers</field>
+        <field name="res_model">stocksense.operation</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('operation_type','=','internal')]</field>
+        <field name="context">{'default_operation_type':'internal'}</field>
+    </record>
+
+    <record id="action_stocksense_ledger" model="ir.actions.act_window">
+        <field name="name">Stock Ledger</field>
+        <field name="res_model">stocksense.ledger</field>
+        <field name="view_mode">list</field>
+    </record>
+
+    <record id="action_stocksense_adjustments" model="ir.actions.act_window">
+        <field name="name">Inventory Adjustments</field>
+        <field name="res_model">stocksense.adjustment</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <record id="view_stocksense_location_stock_list" model="ir.ui.view">
+        <field name="name">stocksense.location.stock.list</field>
+        <field name="model">stocksense.location.stock</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="product_id"/>
+                <field name="location_id"/>
+                <field name="quantity"/>
+                <field name="last_updated"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_stocksense_location_stock" model="ir.actions.act_window">
+        <field name="name">Stock by Location</field>
+        <field name="res_model">stocksense.location.stock</field>
+        <field name="view_mode">list</field>
+    </record>
+
+</odoo>
