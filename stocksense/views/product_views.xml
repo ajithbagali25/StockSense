@@ -1,0 +1,93 @@
+<odoo>
+    <record id="view_stocksense_category_list" model="ir.ui.view">
+        <field name="name">stocksense.category.list</field>
+        <field name="model">stocksense.category</field>
+        <field name="arch" type="xml">
+            <list editable="bottom">
+                <field name="name"/>
+                <field name="product_count"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_stocksense_product_list" model="ir.ui.view">
+        <field name="name">stocksense.product.list</field>
+        <field name="model">stocksense.product</field>
+        <field name="arch" type="xml">
+            <list decoration-danger="out_of_stock"
+                  decoration-warning="low_stock">
+                <field name="name"/>
+                <field name="sku"/>
+                <field name="category_id"/>
+                <field name="uom"/>
+                <field name="current_stock"/>
+                <field name="reorder_level"/>
+                <field name="low_stock"/>
+                <field name="out_of_stock"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_stocksense_product_form" model="ir.ui.view">
+        <field name="name">stocksense.product.form</field>
+        <field name="model">stocksense.product</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name"/></h1>
+                    </div>
+                    <group>
+                        <group string="Product Details">
+                            <field name="sku"/>
+                            <field name="category_id"/>
+                            <field name="uom"/>
+                        </group>
+                        <group string="Stock Control">
+                            <field name="initial_stock"/>
+                            <field name="current_stock" readonly="1"/>
+                            <field name="reorder_level"/>
+                            <field name="low_stock" readonly="1"/>
+                            <field name="out_of_stock" readonly="1"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_stocksense_product_search" model="ir.ui.view">
+        <field name="name">stocksense.product.search</field>
+        <field name="model">stocksense.product</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="sku"/>
+                <field name="category_id"/>
+                <filter name="low_stock" string="Low Stock"
+                        domain="[('low_stock','=',True)]"/>
+                <filter name="out_stock" string="Out of Stock"
+                        domain="[('out_of_stock','=',True)]"/>
+                <group string="Group By">
+                    <filter name="group_category" string="Category"
+                            context="{'group_by':'category_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_stocksense_products" model="ir.actions.act_window">
+        <field name="name">Products</field>
+        <field name="res_model">stocksense.product</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_stocksense_product_search"/>
+    </record>
+
+    <record id="action_stocksense_categories" model="ir.actions.act_window">
+        <field name="name">Categories</field>
+        <field name="res_model">stocksense.category</field>
+        <field name="view_mode">list</field>
+    </record>
+</odoo>
